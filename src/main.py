@@ -10,12 +10,11 @@ from open3d import *
 from Reconstruction.reconstruction import Reconstructor
 from Segmentation.segmentation import Segmenter
 from Augmentation.augmentation import Augmentor
+from Augmentation.augmentation_ui import AugmentationUI
 
-# from paths import camera_config_path, reconstruction_system
-# print('rec')
-# print(reconstruction_system)
+from paths import camera_config_path, reconstruction_system
 
-# from paths import sensors
+from paths import sensors
 
 import json
 from os import makedirs
@@ -74,7 +73,7 @@ class View(QWidget):
         self._thread = None
         if self._thread == None:
             self._thread = QThread()
-
+        
         self._thread.start()
         self.vid = ShowVideo()
         self.vid.moveToThread(self._thread)
@@ -82,6 +81,8 @@ class View(QWidget):
 
         self.vid.VideoSignal.connect(image_viewer.setImage)
         self.sgnStop.connect(self.vid.stopVideo)
+
+        self.augmentation_ui = AugmentationUI()
 
 
 
@@ -142,7 +143,7 @@ class View(QWidget):
 
         # Augmentation
         augment_btn = QPushButton('Augment', self)
-        augment_btn.clicked.connect(self.Augment)
+        augment_btn.clicked.connect(self.augmentation_ui.start)
         augment_btn.resize(reconstruct_btn.sizeHint())
         augment_btn.setFixedWidth(100)
         augment_btn.setFixedHeight(90)
