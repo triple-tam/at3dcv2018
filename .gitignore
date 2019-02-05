@@ -1,5 +1,6 @@
-Samples
-pyrealsenseformac
+Samples/*
+Data/*
+pyrealsenseformac/*
 Reconstruction
 .vscode
 .idea
@@ -7,4 +8,3 @@ Reconstruction
 src/__pycache__
 src/.idea
 src/.vscode
-Test

@@ -1,12 +1,12 @@
 import sys
 
 from PyQt5.QtWidgets import QWidget, QToolTip, QPushButton, QApplication, QMessageBox, QVBoxLayout, \
-                            QMainWindow, QApplication, QHBoxLayout, QGridLayout
+                            QMainWindow, QApplication, QHBoxLayout, QGridLayout, QStackedWidget
 from PyQt5.QtGui import QFont, QImage, QPainter, QIcon, QPixmap
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, QThread, QCoreApplication, Qt, QObject, QFile, QTextStream, QSize
 
 from open3d import *
-# sys.path.append('src')
+sys.path.append('src')
 from Reconstruction.reconstruction import Reconstructor
 from Segmentation.segmentation import Segmenter
 from Augmentation.augmentation import Augmentor
@@ -56,6 +56,7 @@ class View(QWidget):
 
     def __init__(self):
         super().__init__()
+        self.Stack = QStackedWidget(self)
         self._thread = None
         self.initUI()
 
@@ -64,8 +65,6 @@ class View(QWidget):
         central_widget = QWidget()
         layout = QGridLayout(central_widget)
         layout.setSpacing(10)
-
-
 
         # self.setCentralWidget(central_widget)
 
@@ -81,10 +80,6 @@ class View(QWidget):
 
         self.vid.VideoSignal.connect(image_viewer.setImage)
         self.sgnStop.connect(self.vid.stopVideo)
-
-        self.augmentation_ui = AugmentationUI()
-
-
 
         # dummy button
         dummy_button = QPushButton('dummy')
@@ -143,7 +138,7 @@ class View(QWidget):
 
         # Augmentation
         augment_btn = QPushButton('Augment', self)
-        augment_btn.clicked.connect(self.augmentation_ui.start)
+        augment_btn.clicked.connect(self.Augment)
         augment_btn.resize(reconstruct_btn.sizeHint())
         augment_btn.setFixedWidth(100)
         augment_btn.setFixedHeight(90)
@@ -206,6 +201,7 @@ class View(QWidget):
         # set geometry
         self.setGeometry(0, 0, 1000, 650)
         self.setWindowTitle('App')
+
         self.show()
 
 
@@ -229,7 +225,6 @@ class View(QWidget):
         path_color = join(output_folder, "color")
 
         self.make_clean_folder(path_output, path_depth, path_color)
-
 
     def make_clean_folder(self, path_folder, path_depth, path_color):
 
@@ -259,13 +254,15 @@ class View(QWidget):
         self.s = Segmenter(self.r.reconstructed_pointcloud)
 
     def Augment(self):
-        name = "/home/pti/Downloads/tum/at3dcv/project/pointclouds_for_fun/scene0000_00_vh_clean_2.labels.ply"
+
+        name = 'Samples/scene0000_01_vh_clean_2.ply'
         dummy_pcl = read_point_cloud(name)
-        draw_geometries([dummy_pcl])
-        # self.t = Augmentor(self, dummy_pcl)
 
-
-
+        name_labels = 'Samples/scene0000_01_vh_clean_2.labels.ply'
+        dummy_pcl_labels = read_point_cloud(name_labels)
+        
+        t = Augmentor(dummy_pcl, dummy_pcl_labels)
+        self.augmentation_ui = AugmentationUI(t)
 
 class ImageViewer(QWidget):
     def __init__(self, parent=None):
@@ -452,3 +449,4 @@ if __name__ == '__main__':
     app.setStyleSheet(stream.readAll())
     view = View()
     sys.exit(app.exec_())
+    

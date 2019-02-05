@@ -1,4 +1,4 @@
-import os
+import os   
 
 rel_path = os.path.realpath('') + '/src/'
 
@@ -10,3 +10,4 @@ record_config = rel_path + 'Reconstruction/ReconstructionSystem/config/realsense
 augmentation_util = rel_path + 'Augmentation/'
 macpyrealsense2 = os.path.realpath('') + '/pyrealsenseformac/'
 camera_config_path = rel_path + 'Reconstruction/ReconstructionSystem/config/realsense.json'
+furnitures_path = os.path.realpath('') + '/Data/Furnitures/'
